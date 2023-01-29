@@ -1,146 +1,113 @@
-<!doctype html>
+<?php
+session_start();
+require_once './dbconnection.php';
+
+if (!isset($_SESSION['user_login'])) {
+    header('location:login.php');
+}
+?>
+
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>SMS</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="../css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 
-    <title>Shop Management System</title>
+    <script src="../js/jquery-3.5.1.js"></script>
+    <script src="../js/jquery.dataTables.min.js"></script>
+    <script src="../js/dataTables.bootstrap4.min.js"></script>
+    <script src="../js/script.js"></script>
+
 
 </head>
 
 <body>
-    <div class="container">
-        <br />
-        <a class="btn btn-primary float-right" href="admin/login.php">Login</a>&nbsp;&nbsp;
-        <a class="btn btn-primary float-right" href="admin/registration.php">Registration</a>&nbsp;&nbsp;
-        <br /><br />
-        <h1 class="text-center">Welcome to Shop Management System</h1><br />
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.php">SMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <div class="row">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
+        <div class="float-right collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
 
-                <form action="" method="POST">
-                    <table class="table table-bordered">
-                        <tr>
-                            <td class="text-center" colspan="2"><label>Product Information</label></td>
-                        </tr>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa fa-user-circle"> Welcome</i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="registration.php"><i class="fa fa-user-plus"> Add User</i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php?page=user-profile"><i class="fa fa-user"> Profile</i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="logout.php"><i class="fa fa-power-off"> Logout</i></a>
+                </li>
 
-                        <tr>
-                            <td>
-                                <label for="choose">Choose Product</label>
-                            </td>
-                            <td>
-                                <select class="form-control" id="choose" name="choose">
-                                    <option value="">Select</option>
-                                    <option value="Miniket Rice Premium">Rice</option>
-                                    <option value="Moshur Dal (Deshi)">Dal</option>
-                                    <option value="Chicken Eggs(layer)">Egg</option>
-                                    <option value="Onion(Imported)">Onion</option>
-                                    <option value="Fresh Refined Sugar">Sugar</option>
-                                    <option value="Fresh Fortified Soyabean Oil(5 ltr)">Oil</option>
-                                    <option value="Potato Regular">Potato</option>
-                                    <option value="Vim Dishwashing Bar">Vim</option>
-                                    <option value="ACI Pure Salt">Salt</option>
-                                    <option value="Bashundhara Toilet Tissue">Toilet Tissue</option>                                 
-                                    <option value="Wheel Washing Powder">Washing Powder</option>
-                                    <option value="Teer Flour (Atta)">Flour</option>
-                                    <option value="Radhuni Chilli (Morich) Powder">Chilli Powder</option>
 
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="text-center" colspan="2">
-                                <input class="btn btn-info" type="submit" value="Show Info" name="show_info">
-                            </td>
-                        </tr>
-                    </table>
-
-                </form>
-            </div>
-
-            <div class="col-sm-4"></div>
+            </ul>
 
         </div>
-        <br />
-        <?php
-        require_once './admin/dbconnection.php';
-
-        if (isset($_POST['show_info'])) {
-            //print_r($_POST);
-            $choose = $_POST['choose'];
-            $result = mysqli_query($link, "SELECT * FROM `product_info` WHERE `name`='$choose'");
-            //print_r($result);
-            if (mysqli_num_rows($result) == 1) {
-                $row=mysqli_fetch_assoc($result);
-                //print_r($row);
-        ?>
+    </nav>
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-11 col-sm-offset-2">
-                <table class=" table table-bordered" style="text-align: center;">
-                    <tr>
-                        <td rowspan="3">
-                            <img style="width: 300px; height:270px;"
-                                src="admin/product_images/<?php echo $row['photo'] ?>" class="img-thumbnail">
-                        </td>
-                        <td>Name</td>
-                        <td><?php echo ucwords($row['name']); ?></td>
-                    </tr>
-
-                    <tr>
-                        <td>Quantity</td>
-                        <td><?php echo $row['quantity']; ?></td>
-                    </tr>
-
-                    <tr>
-                        <td>Price</td>
-                        <td><?php echo $row['price']; ?></td>
-                    </tr>
-                
-
-
-                </table>
+            <div class="col-sm-3">
+                <div class="list-group">
+                    <a href="index.php?page=dashboard" class="list-group-item active">
+                        <i class="fa fa-dashboard"> Dashboard</i>
+                    </a>
+                    <a href="index.php?page=add-student" class="list-group-item"><i class="fa fa-user-plus"> Add Student</i></a>
+                    <a href="index.php?page=all-students" class="list-group-item"><i class="fa fa-users"> All Students</i></a>
+                    <a href="index.php?page=all-users" class="list-group-item"><i class="fa fa-users"> All Users</i></a>
+                </div>
             </div>
-
-
+            <div class="col-sm-9">
+                <div class="content">
+                    <?php
+                        //require_once('./dashboard.php')
+                        //echo $_GET['page'].'.php';
+                        //$page=$_GET['page'].'.php';
+                        if(isset($_GET['page']))
+                        {
+                            $page=$_GET['page'].'.php';
+                        }
+                        else
+                        {
+                            $page="dashboard.php";
+                        }
+                        
+                        if(file_exists($page))
+                        {
+                            require_once $page;
+                        }
+                        else
+                        {
+                            //echo "File not found";
+                            require_once '404.php';
+                        }
+                    ?>
+                </div>
+            </div>
         </div>
-        <?php
-            }
-            else
-            {
-                ?>
-        <script type="text/javascript">
-        alert("Data Not Found");
-        </script>
-        <?php
-            }
-        }
-        ?>
-
-
-
+        
 
     </div>
+    <footer class="footer-area">
+        <p>Copyright &copy; 2020 Students Management System. All rights are preserved</p>
+    </footer>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
-    </script>
 </body>
 
 </html>
